@@ -1,0 +1,38 @@
+# Build results
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio
+.vs/
+.vscode/
+*.sln.iml
+*.user
+*.userprefs
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Dependencies
+packages/
+.nuget/
+
+# Testing
+TestResults/
+*.trx
+
+# Runtime
+appsettings.*.json
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
