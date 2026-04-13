@@ -39,9 +39,24 @@ namespace MinimalAPI.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Admins");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "admin@admin.com",
+                            Name = "Admin",
+                            Password = "admin123",
+                            Role = "Admin"
+                        });
                 });
 #pragma warning restore 612, 618
         }
