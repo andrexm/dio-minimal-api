@@ -16,6 +16,10 @@ public class Admin
     [Required]
     [MaxLength(255)]
     public string Email { get; set; } = default!;
+
+    [Required]
+    [MaxLength(50)]
+    public string Role { get; set; } = "Admin";
     
     [Required]
     [MaxLength(255)]
