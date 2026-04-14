@@ -1,6 +1,6 @@
 using MinimalAPI.Domain.Entities;
 using MinimalAPI.Domain.Interfaces;
-using MinimalAPI.DTOs;
+using MinimalAPI.Domain.DTOs;
 using MinimalAPI.Infra.DB;
 
 namespace MinimalAPI.Domain.Services;
