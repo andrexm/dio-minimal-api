@@ -32,7 +32,7 @@ var app = builder.Build();
 app.MapGet("/", () =>
 {
     return Results.Json(new Home());
-});
+}).WithTags("Home");
 
 #endregion
 
@@ -45,7 +45,7 @@ app.MapPost("/admin/login", ([FromBody] LoginDTO loginDTO, IAdminService adminSe
        return Results.Unauthorized();
    }
    return Results.Ok(admin);
-});
+}).WithTags("Admin");
 
 #endregion
 
@@ -61,13 +61,13 @@ app.MapPost("/vehicles", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehi
     };
     vehicleService.CreateVehicle(vehicle);
     return Results.Created($"/vehicles/{vehicle.Id}", vehicle);
-});
+}).WithTags("Vehicles");
 
 app.MapGet("/vehicles", (IVehicleService vehicleService, [FromQuery] int? page = null) =>
 {
     var vehicles = vehicleService.GetAllVehicles(page ?? 1);
     return Results.Ok(vehicles);
-});
+}).WithTags("Vehicles");
 #endregion
 
 #region App
