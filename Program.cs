@@ -95,6 +95,18 @@ app.MapPut("/vehicles/{id}", ([FromRoute] int id, [FromBody] VehicleDTO vehicleD
     vehicleService.UpdateVehicle(existingVehicle);
     return Results.Ok(existingVehicle);
 }).WithTags("Vehicles");
+
+app.MapDelete("/vehicles/{id}", ([FromRoute] int id, IVehicleService vehicleService) =>
+{
+    var vehicle = vehicleService.GetVehicleById(id);
+    if (vehicle == null)
+    {
+        return Results.NotFound();
+    }
+
+    vehicleService.DeleteVehicle(vehicle);
+    return Results.NoContent();
+}).WithTags("Vehicles");
 #endregion
 
 #region App
