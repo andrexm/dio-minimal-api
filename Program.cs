@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.OpenApi.Models;
+using System.Security.Cryptography.Xml;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -29,11 +31,10 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        //ValidateIssuer = true,
+        ValidateIssuer = false,
         ValidateLifetime = true,
-        ValidateAudience = true,
+        ValidateAudience = false,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-
     };
 });
 
@@ -43,7 +44,33 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Provide a JWT Token here."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+            },
+            new string[]{}
+        }
+    });
+});
 
 builder.Services.AddDbContext<DBContext>(options =>
 {
@@ -61,7 +88,7 @@ var app = builder.Build();
 app.MapGet("/", () =>
 {
     return Results.Json(new Home());
-}).WithTags("Home");
+}).AllowAnonymous().WithTags("Home");
 
 #endregion
 
@@ -132,7 +159,7 @@ app.MapPost("/admin/login", ([FromBody] LoginDTO loginDTO, IAdminService adminSe
        Token = token
    };
    return Results.Ok(adminMv);
-}).WithTags("Admin");
+}).AllowAnonymous().WithTags("Admin");
 
 app.MapPost("/admin", ([FromBody] AdminDTO adminRegisterDTO, IAdminService adminService) =>
 {
