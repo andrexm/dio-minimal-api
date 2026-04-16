@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using System.Security.Cryptography.Xml;
+using Microsoft.AspNetCore.Authorization;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -131,7 +132,7 @@ string CreateJwtToken(Admin admin, string jwtKey)
     var claims = new List<Claim>()
     {
         new Claim("Email", admin.Email),
-        new Claim("Role", admin.Role)
+        new Claim(ClaimTypes.Role, admin.Role)
     };
     var token = new JwtSecurityToken(
         claims: claims,
@@ -186,7 +187,10 @@ app.MapPost("/admin", ([FromBody] AdminDTO adminRegisterDTO, IAdminService admin
         Role = admin.Role
     };
     return Results.Created($"/admin/{admin.Id}", adminMv);
-}).RequireAuthorization().WithTags("Admin");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = Roles.Admin})
+    .WithTags("Admin");
 
 app.MapGet("/admin", (IAdminService adminService, [FromQuery] int? page = null) =>
 {
@@ -199,7 +203,10 @@ app.MapGet("/admin", (IAdminService adminService, [FromQuery] int? page = null) 
         Role = a.Role
     }).ToList();
     return Results.Ok(adminMvs);
-}).RequireAuthorization().WithTags("Admin");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = Roles.Admin})
+    .WithTags("Admin");
 
 app.MapGet("/admin/{id}", ([FromRoute] int id, IAdminService adminService) =>
 {
@@ -215,7 +222,10 @@ app.MapGet("/admin/{id}", ([FromRoute] int id, IAdminService adminService) =>
         Email = admin.Email,
         Role = admin.Role
     });
-}).RequireAuthorization().WithTags("Admin");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = Roles.Admin})
+    .WithTags("Admin");
 #endregion
 
 #region Vehicles
@@ -268,13 +278,19 @@ app.MapPost("/vehicles", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehi
     };
     vehicleService.CreateVehicle(vehicle);
     return Results.Created($"/vehicles/{vehicle.Id}", vehicle);
-}).RequireAuthorization().WithTags("Vehicles");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = $"{Roles.Admin},{Roles.Editor}"})
+    .WithTags("Vehicles");
 
 app.MapGet("/vehicles", (IVehicleService vehicleService, [FromQuery] int? page = null) =>
 {
     var vehicles = vehicleService.GetAllVehicles(page ?? 1);
     return Results.Ok(vehicles);
-}).RequireAuthorization().WithTags("Vehicles");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = $"{Roles.Admin},{Roles.Editor}"})
+    .WithTags("Vehicles");
 
 app.MapGet("/vehicles/{id}", ([FromRoute] int id, IVehicleService vehicleService) =>
 {
@@ -284,7 +300,10 @@ app.MapGet("/vehicles/{id}", ([FromRoute] int id, IVehicleService vehicleService
         return Results.NotFound();
     }
     return Results.Ok(vehicle);
-}).RequireAuthorization().WithTags("Vehicles");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = $"{Roles.Admin},{Roles.Editor}"})
+    .WithTags("Vehicles");
 
 app.MapPut("/vehicles/{id}", ([FromRoute] int id, [FromBody] VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
 {
@@ -307,7 +326,10 @@ app.MapPut("/vehicles/{id}", ([FromRoute] int id, [FromBody] VehicleDTO vehicleD
 
     vehicleService.UpdateVehicle(existingVehicle);
     return Results.Ok(existingVehicle);
-}).RequireAuthorization().WithTags("Vehicles");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = Roles.Admin})
+    .WithTags("Vehicles");
 
 app.MapDelete("/vehicles/{id}", ([FromRoute] int id, IVehicleService vehicleService) =>
 {
@@ -319,7 +341,10 @@ app.MapDelete("/vehicles/{id}", ([FromRoute] int id, IVehicleService vehicleServ
 
     vehicleService.DeleteVehicle(vehicle);
     return Results.NoContent();
-}).RequireAuthorization().WithTags("Vehicles");
+})
+    .RequireAuthorization()
+    .RequireAuthorization(new AuthorizeAttribute {Roles = Roles.Admin})
+    .WithTags("Vehicles");
 #endregion
 
 #region App
