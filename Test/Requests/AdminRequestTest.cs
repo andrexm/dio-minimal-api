@@ -21,7 +21,7 @@ public class AdminRequestTest
 
         var content = new StringContent(JsonSerializer.Serialize(loginDTO), Encoding.UTF8, "application/json");
 
-        var response = await Setup.client.PostAsync("/api/admin/login", content);
+        var response = await Setup.client.PostAsync("/admin/login", content);
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
