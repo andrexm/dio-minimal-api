@@ -25,6 +25,7 @@ public class Setup
             builder.ConfigureServices(services =>
             {
                 services.AddScoped<IAdminService, AdminServiceMock>();
+                services.AddScoped<IVehicleService, VehicleServiceMock>();
             });
         });
 
