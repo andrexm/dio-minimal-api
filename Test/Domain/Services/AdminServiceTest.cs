@@ -29,6 +29,7 @@ public class AdminServiceTest
         var admin = new Admin();
         admin.Email = "test@test.com";
         admin.Password = "strongstring";
+        admin.Name = "Test Admin";
         admin.Role = "Admin";
 
         var context = CreateContextTest();
@@ -39,6 +40,6 @@ public class AdminServiceTest
         var adminResult = adminService.GetAdminById(admin.Id);
 
         Assert.AreEqual(1, adminService.GetAllAdmins(1).Count());
-        Assert.AreEqual(1, adminResult.Id);
+        Assert.AreEqual(1, adminResult?.Id);
     }
 }
