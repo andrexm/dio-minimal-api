@@ -10,13 +10,27 @@ namespace Test.Requests;
 [TestClass]
 public class AdminRequestTest
 {
+    [ClassInitialize]
+    public static void ClassInit(TestContext testContext)
+    {
+        Setup.ClassInit(testContext);
+    }
+
+    [ClassCleanup]
+    public static void ClassCleanup()
+    {
+        Setup.ClassCleanup();
+    }
+
     [TestMethod]
     public async Task TestGetSetProperties()
     {
+        Assert.IsNotNull(Setup.client, "Setup.client is null");
+
         var loginDTO = new LoginDTO
         {
-            Email = "admin@test.com",
-            Password = "password123"
+            Email = "admin@admin.com",
+            Password = "admin123"
         };
 
         var content = new StringContent(JsonSerializer.Serialize(loginDTO), Encoding.UTF8, "application/json");
