@@ -39,6 +39,6 @@ public class VehicleServiceTest
         vehicleService.CreateVehicle(vehicle);
         var vehicleResult = vehicleService.GetVehicleById(vehicle.Id);
 
-        Assert.AreEqual(1, vehicleResult.Id);
+        Assert.AreEqual(1, vehicleResult?.Id);
     }
 }
